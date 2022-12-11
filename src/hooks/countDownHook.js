@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import {useState,useEffect} from 'react'
 
-export default function countDownHook(count){
-
-    const [sec,setSec] = useState(count)
-
-    // useEffect(()=>{
-    //     setTimeout(()=>{setSec(sec-1)},1000)
-        
-    // },[sec])
-
-    return [sec,setSec]
-
+export default function countDownHook(sec){
+    const [countDownSec, setCountDownSec] = useState(sec);
+    useEffect(()=>{
+        let interval = setInterval(()=>{
+            if (countDownSec>0){
+                setCountDownSec(countDownSec - 1)
+            }
+        },1000)
+        return () =>{
+            clearInterval(interval)
+        }
+    })
+    return [countDownSec, setCountDownSec]
 }

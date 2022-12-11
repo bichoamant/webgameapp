@@ -1,11 +1,12 @@
-export function  chooseRandomVideo(youtubeVideoList){
+import {useContext} from "react"
+export function  chooseRandomItem(itemList){
 
     
-    if(youtubeVideoList){
+    if(itemList){
 
-        const index =parseInt( (Math.random()*youtubeVideoList.length)-1)
-        const video = youtubeVideoList[index]
-       return video
+        const index = parseInt( (Math.random()*itemList.length)-1)
+        const item = itemList[index]
+       return item
     }else{
         return null
     }
