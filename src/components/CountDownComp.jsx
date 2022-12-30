@@ -1,10 +1,24 @@
-import countDownHook from "../hooks/countDownHook"
+import { useState,useEffect } from "react";
 
 const CountDownComp=(()=>{
-    const[counteDownSec, SetCountDownSec]=countDownHook(13)
+    const [countDownSec, setCountDownSec] = useState(13);
+    useEffect(()=>{
+        let interval = setInterval(()=>{
+            if (countDownSec>0){
+                setCountDownSec(countDownSec - 1)
+                console.log("test");
+            }
+        },1000)
+        return () =>{
+            clearInterval(interval)
+        }
+    })
 
     return(
-        <div>{counteDownSec}</div>
+        <>
+            <p>Playing...</p>
+            <div>{countDownSec}</div>
+        </>
     )
 })
 export default CountDownComp

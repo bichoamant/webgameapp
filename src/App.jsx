@@ -1,13 +1,13 @@
 // React and Other Library
-import { useState, createContext } from 'react'
-import * as ReactDOM from 'react-dom/client';
+import { useState } from 'react'
+import YouTube from 'react-youtube';
 
 // components
 import CardImage from './components/CardImage'
 import InputButton from './components/InputButton'
 
 // js
-import {chooseRandomItem} from './js/smallFunctions.js'
+import {chooseRandomItem, getQuizByVideoId} from './util/smallFunctions.js'
 
 // CSS
 import './style/Waves.css'
@@ -16,10 +16,8 @@ import './App.css'
 
 // hooks
 import makeStaticLists from './hooks/makeStaticLists'
-import CountDownComp from './components/CountDownComp';
 
-//const Stranges
-const playingTxt = "playing..."
+
 ////////////// //////////////
  // CONTEXT
 ////////////// //////////////
@@ -28,14 +26,6 @@ const playingTxt = "playing..."
 
 function App() {
   
-  
-  ////////////////////////////
-  // dom elements
-  ////////////////////////////
-  
-  const howToDom = document.getElementById('howTo')
-  const handleBtnDom = document.getElementById('handleBtn')
-  const cardImageDom = document.getElementById('cardImage')
 
   ////////////// //////////////
   // const and variables
@@ -47,6 +37,16 @@ function App() {
 const PLAY_LIST_ID = "PL32RkBdibPYUJglOa1xRhjqcJ2Z8Siczs"
 const PLAY_LIST_GET_URL = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&key='+import.meta.env.VITE_YOUTUBE_API_KEY+'&playlistId='+PLAY_LIST_ID
 
+//use in youtube api
+const [iframeOpt, setIFrameOpt] = useState({
+  height: '0',
+  width: 'auto',
+  playerVars: {
+    // https://developers.google.com/youtube/player_parameters
+    autoplay: 1,
+  },
+});
+
 
 
 
@@ -56,36 +56,69 @@ const PLAY_LIST_GET_URL = 'https://www.googleapis.com/youtube/v3/playlistItems?p
 const [quizList, setQuizList] = makeStaticLists(QUIZ_GET_URL,"lists")
 const [musicList, setMusicList] = makeStaticLists(PLAY_LIST_GET_URL,"items")
 const [currentVideo, setCurrentVideo] = useState(null)
-// const [introSec, setIntroSec] = useState(INTRO_TIMER)
+const [currentQuiz, setCurrentQuiz] = useState(null)
 
-  ////////////// //////////////
+const [kindOfCardImage, setKindOfCardImage] = useState("wave");
+const [stateOfCardImage, setStateOfCardImage] = useState("stop");
+
+const [howToPlay, setHowToPlay] = useState("Press the Start Button");
+
+//button actions and texts
+const [buttonValue, setButtonValue] = useState("StartButton");
+const [onClick, setOnClick] = useState(null);
+
+// ansewer state 
+// 0: New Question
+// 1: Choosing answer
+// 2: Answered
+
+const [answerState, setAnswerState] = useState(0);
+
+
+  //////////////
   // Event Functions
   ////////////// //////////////
 
  //start button -> playing
  const startButtonEvent = (e) =>{
+  
+  //initialise answered state
+    setAnswerState(0)
+  // inistialise quiz
     const video =chooseRandomItem(musicList)
     setCurrentVideo(video)
+    console.log(quizList);
     console.log(video)
+    
+    setCurrentQuiz(getQuizByVideoId(video.snippet.resourceId.videoId,video.snippet.playlistId,quizList))
+     //move card image  
+    setKindOfCardImage("wave")
+    setStateOfCardImage("move")
 
-    // render card image
-    ReactDOM.createRoot(cardImageDom).render(
-      <CardImage 
-        kind="wave"
-        value="move"
-      />
-    )
+    //changing button text
+    setButtonValue("gotit")
+    setHowToPlay("What is the title of the game in which this music was played?")
+    
 
-    //render how to
-    const playingEl = (
-      <div>
-       <p>{playingTxt}</p>
-        <CountDownComp />
-      </div>
-    )
-    ReactDOM.createRoot(howToDom).render(playingEl)
   }
+  const nextVideo=(e)=>{
+
+  }
+
+
+  const stopVideo=(e)=>{
+    
+    let interval =  setInterval(()=>{
+        setKindOfCardImage("wave")
+        setStateOfCardImage("stop")
+        e.target.stopVideo()
+        clearInterval(interval)
+        setHowToPlay("Choose your answer!")
+        setAnswerState(1)
+    },13000)
   
+  }
+
   return (
 
       <div className="App">
@@ -95,36 +128,45 @@ const [currentVideo, setCurrentVideo] = useState(null)
           </h2>
           <div id="cardImage" className="card-image">
               <CardImage 
-                kind="wave"
-                value="stop"
+                kindOfImage={kindOfCardImage}
+                stateOfImage={stateOfCardImage}
+              />
+              <YouTube
+                videoId= {currentVideo ? currentVideo.snippet.resourceId.videoId :''}
+                onPlay = {answerState==0? stopVideo :nextVideo}
+                opts={iframeOpt}
+
               />
           </div>
           <div className="card-content">
             <div className="content">
               <div id="howTo" className="howTo">
-                <h4>Press the Start button</h4>
+                <h4> {howToPlay} </h4>
               </div>
                 <div id="handleBtn">
                 <InputButton 
                   buttonType="button"
-                  buttonId="startButton"
+                  buttonId="controlBtn"
+                  buttonValue={buttonValue}
                   buttonClass='button is-danger is-light'
-                  clickEvent={startButtonEvent}
+                  clickEvent={onClick ? onClick: startButtonEvent }
                   />
                 </div>
             </div>
           </div>
-            <div >
-              {/* <div className="buttons">
-                <button className="button is-primary" id ="button1"><column is-6>Final Fantasy VII</column></button>
-                <button className="button is-primary" id ="button2"><column is-6>ActRaiser</column></button>
+            <div>
+              <div className="buttons">
+                <button className="button is-primary" id ="button1"><column is-6>{currentQuiz? currentQuiz.options.a:"option A"}</column></button>
+                <button className="button is-primary" id ="button2"><column is-6>{currentQuiz? currentQuiz.options.b:"option B"}</column></button>
               </div>
               <div className="buttons">
-                <button className="button is-primary" id ="button3"><column is-6>Zelda</column></button>
-                <button className="button is-primary" id ="button4"><column is-6>Diablo II</column></button>
-              </div> */}
+                <button className="button is-primary" id ="button3"><column is-6>{currentQuiz? currentQuiz.options.c:"option C"}</column></button>
+                <button className="button is-primary" id ="button4"><column is-6>{currentQuiz? currentQuiz.options.d:"option D"}</column></button>
+              </div>
             </div>
         </div>
+        <div id="player"></div>
+        <script className="youtube" src="https://www.youtube.com/iframe_api"></script>
       </div>
   )
 }

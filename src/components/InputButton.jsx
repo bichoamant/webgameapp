@@ -6,6 +6,7 @@ const InputButton = (
         buttonClass,
         clickEvent,
         buttonType,
+        buttonValue,
         style
     }
 )=>{
@@ -18,7 +19,7 @@ const InputButton = (
                 id={buttonId}
                 onClick={clickEvent}
                 >
-                START
+                {buttonValue}
             </button>
         </form>
 

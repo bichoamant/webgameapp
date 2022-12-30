@@ -1,25 +1,35 @@
 import React from 'react'
 import Waves from './Waves'
+import CountDownComp from './CountDownComp'
 
 
 
 const CardImage = ({
-    kind,
-    value
+    kindOfImage,
+    stateOfImage
 }) =>{ 
 
-    if(kind == "wave"){
+    if(kindOfImage == "wave"){
         
         return(
         <>
             <Waves 
               spinner="spinner"
-              rect1={"rect1 " + value}
-              rect2={"rect2 " + value}
-              rect3={"rect3 " + value}
-              rect4={"rect4 " + value}
-              rect5={"rect5 " + value}
+              rect1={"rect1 " + stateOfImage}
+              rect2={"rect2 " + stateOfImage}
+              rect3={"rect3 " + stateOfImage}
+              rect4={"rect4 " + stateOfImage}
+              rect5={"rect5 " + stateOfImage}
             />
+            {stateOfImage=="move" 
+                ? 
+                <div>
+                    <CountDownComp />
+                </div>
+                :<></>
+            }
+            
+
         </>
         )
     }else{
@@ -34,6 +44,7 @@ const CardImage = ({
               rect4=""
               rect5=""
             />
+
         </>
         )
     }
