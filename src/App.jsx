@@ -122,7 +122,7 @@ const [answerState, setAnswerState] = useState(0);
   return (
 
       <div className="App">
-        <div id = 'cardContainer' className = "card">
+        <div id = "cardContainer" className = "card">
           <h2 className="title">
             Music Intro Quiz
           </h2>
