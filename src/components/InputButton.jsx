@@ -7,7 +7,7 @@ const InputButton = (
         clickEvent,
         buttonType,
         buttonValue,
-        style
+        visible
     }
 )=>{
     return (
@@ -18,6 +18,7 @@ const InputButton = (
                 className={buttonClass}
                 id={buttonId}
                 onClick={clickEvent}
+                style={{visibility:visible? "visible":"hidden"}}
                 >
                 {buttonValue}
             </button>

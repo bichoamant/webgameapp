@@ -65,6 +65,9 @@ const [howToPlay, setHowToPlay] = useState("Press the Start Button");
 
 //button actions and texts
 const [buttonValue, setButtonValue] = useState("StartButton");
+const [ctrlBtnVisible, setCtrlBtnVisible] = useState(true);
+const [optionsBtnVisible, setOptionsBtnVisible] = useState(false);
+
 const [onClick, setOnClick] = useState(null);
 
 // ansewer state 
@@ -84,19 +87,17 @@ const [answerState, setAnswerState] = useState(0);
   
   //initialise answered state
     setAnswerState(0)
+    setCtrlBtnVisible(false)
   // inistialise quiz
     const video =chooseRandomItem(musicList)
     setCurrentVideo(video)
-    console.log(quizList);
-    console.log(video)
-    
     setCurrentQuiz(getQuizByVideoId(video.snippet.resourceId.videoId,video.snippet.playlistId,quizList))
-     //move card image  
+
+    //move card image  
     setKindOfCardImage("wave")
     setStateOfCardImage("move")
 
     //changing button text
-    setButtonValue("gotit")
     setHowToPlay("What is the title of the game in which this music was played?")
     
 
@@ -115,6 +116,7 @@ const [answerState, setAnswerState] = useState(0);
         clearInterval(interval)
         setHowToPlay("Choose your answer!")
         setAnswerState(1)
+        setOptionsBtnVisible(true)
     },13000)
   
   }
@@ -150,18 +152,31 @@ const [answerState, setAnswerState] = useState(0);
                   buttonValue={buttonValue}
                   buttonClass='button is-danger is-light'
                   clickEvent={onClick ? onClick: startButtonEvent }
+                  visible={ctrlBtnVisible}
                   />
                 </div>
             </div>
           </div>
             <div>
               <div className="buttons">
-                <button className="button is-primary" id ="button1"><column is-6>{currentQuiz? currentQuiz.options.a:"option A"}</column></button>
-                <button className="button is-primary" id ="button2"><column is-6>{currentQuiz? currentQuiz.options.b:"option B"}</column></button>
+                <button className="button is-primary" id ="button1"
+                style={{visibility:optionsBtnVisible? "visible":"hidden"}}>
+                  {currentQuiz? currentQuiz.options.a:"option A"}
+                </button>
+                <button className="button is-primary" id ="button2"
+                style={{visibility:optionsBtnVisible? "visible":"hidden"}}>
+                  {currentQuiz? currentQuiz.options.b:"option B"}
+                </button>
               </div>
               <div className="buttons">
-                <button className="button is-primary" id ="button3"><column is-6>{currentQuiz? currentQuiz.options.c:"option C"}</column></button>
-                <button className="button is-primary" id ="button4"><column is-6>{currentQuiz? currentQuiz.options.d:"option D"}</column></button>
+                <button className="button is-primary" id ="button3"
+                style={{visibility:optionsBtnVisible? "visible":"hidden"}}>
+                  {currentQuiz? currentQuiz.options.c:"option C"}
+                </button>
+                <button className="button is-primary" id ="button4"
+                style={{visibility:optionsBtnVisible? "visible":"hidden"}}>
+                  {currentQuiz? currentQuiz.options.d:"option D"}
+                </button>
               </div>
             </div>
         </div>
